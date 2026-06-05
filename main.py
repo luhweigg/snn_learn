@@ -9,7 +9,7 @@ from src.models.dvs_gesture_snn import DVSGesture_SNN
 from src.data_loaders.nmnist_loader import get_nmnist_loaders
 from src.data_loaders.cifar10_dvs_loader import get_cifar10_loaders
 from src.data_loaders.dvs_gesture_loader import get_dvs_gesture_loaders
-from src.engine.trainer import save_plot, train_one_epoch, evaluate
+from src.engine.trainer import train_one_epoch, evaluate
 from src.engine.quantization import quantize_weights
 
 def main():
@@ -38,18 +38,12 @@ def main():
     scheduler = CosineAnnealingLR(optimizer, T_max=args.epochs)
     criterion = nn.CrossEntropyLoss()
 
-    train_losses = []
-    test_accuracies = []
-
     os.makedirs(args.save_dir, exist_ok=True)
 
     for epoch in range(args.epochs):
         train_loss, train_acc = train_one_epoch(model, train_loader, optimizer, criterion, device)
         test_loss, test_acc = evaluate(model, test_loader, criterion, device)
         scheduler.step()
-
-        train_losses.append(train_loss)
-        test_accuracies.append(test_acc)
         
         print(f"Epoch {epoch+1}/{args.epochs} - "
               f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}% | "
@@ -58,8 +52,6 @@ def main():
     base_path = os.path.join(args.save_dir, f"{args.dataset}_base.pth")
     torch.save(model.state_dict(), base_path)
     print(f"\nPoids standards sauvegardés dans : {base_path}")
-
-    save_plot(train_losses, test_accuracies)
 
     print("Application de la quantification post-entrainement (8-bits)...")
     quantize_weights(model, num_bits=8)
