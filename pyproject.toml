@@ -1,0 +1,12 @@
+[project]
+name = "snn-learn"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "matplotlib>=3.10.9",
+    "spikingjelly>=0.0.0.0.14",
+    "tonic>=1.6.0",
+    "torch>=2.12.0",
+]

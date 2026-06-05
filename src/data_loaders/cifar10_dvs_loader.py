@@ -1,0 +1,27 @@
+import torch
+import tonic
+import tonic.transforms as transforms
+from torch.utils.data import random_split
+
+def get_cifar10_loaders(batch_size=64, n_time_bins=10):
+    tonic.datasets.CIFAR10DVS.url = "https://ndownloader.figshare.com/files/7712788"
+
+    frame_transform = transforms.Compose([
+        transforms.Downsample(spatial_factor=0.25),
+        transforms.ToFrame(sensor_size=(32, 32, 2), n_time_bins=n_time_bins)
+    ])
+
+    dataset = tonic.datasets.CIFAR10DVS(save_to='./data', transform=frame_transform)
+    
+    train_size = int(0.8 * len(dataset))
+    test_size = len(dataset) - train_size
+    train_set, test_set = random_split(dataset, [train_size, test_size])
+
+    train_loader = torch.utils.data.DataLoader(
+        train_set, batch_size=batch_size, shuffle=True, collate_fn=tonic.collation.PadTensors(batch_first=False)
+    )
+    test_loader = torch.utils.data.DataLoader(
+        test_set, batch_size=batch_size, shuffle=False, collate_fn=tonic.collation.PadTensors(batch_first=False)
+    )
+    
+    return train_loader, test_loader
