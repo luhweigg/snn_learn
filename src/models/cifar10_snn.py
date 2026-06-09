@@ -16,5 +16,5 @@ class CIFAR10_SNN(nn.Module):
 
     def forward(self, x: torch.Tensor):
         functional.reset_net(self)
-        out_spikes = self.network(x)
-        return out_spikes.sum(dim=0)
+        out = self.network(x)
+        return out.sum(dim=0)

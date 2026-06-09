@@ -1,0 +1,31 @@
+{
+  "os": "Linux-6.18.7-76061807-generic-x86_64-with-glibc2.39",
+  "python": "CPython 3.12.3",
+  "startedAt": "2026-06-09T09:31:10.703317Z",
+  "args": [
+    "--use_wandb"
+  ],
+  "program": "/home/maximefrys/Documents/projects/snn_learn/main.py",
+  "codePath": "main.py",
+  "codePathLocal": "main.py",
+  "git": {
+    "remote": "git@github.com:luhweigg/snn_learn.git",
+    "commit": "7b4a923816961c78de9ee46e8b40631900b4fd8c"
+  },
+  "email": "maximefrys2e@gmail.com",
+  "root": "/home/maximefrys/Documents/projects/snn_learn",
+  "host": "maximefrys",
+  "executable": "/home/maximefrys/Documents/projects/snn_learn/.venv/bin/python3",
+  "cpu_count": 10,
+  "cpu_count_logical": 16,
+  "disk": {
+    "/": {
+      "total": "997466697728",
+      "used": "253612720128"
+    }
+  },
+  "memory": {
+    "total": "16454156288"
+  },
+  "writerId": "kt9azokkqfqk2o70htu5raar0lx45arl"
+}

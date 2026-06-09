@@ -1,21 +1,35 @@
 import torch
-import torch.nn as nn
-import matplotlib.pyplot as plt
+from tqdm import tqdm
+from spikingjelly.activation_based import neuron
 
-def train_one_epoch(model, dataloader, optimizer, criterion, device, num_classes=10):
+def train_one_epoch(model, dataloader, optimizer, criterion, device, scaler=None):
+    """
+    Train the model for one epoch.
+    """
     model.train()
     total_loss = 0.0
     correct = 0
     total = 0
 
-    for events, targets in dataloader:
-        events, targets = events.to(device), targets.to(device)
+    pbar = tqdm(dataloader, desc="Epoch", leave=False)
+    for events, targets in pbar:
+        events, targets = events.to(device, dtype=torch.float32), targets.to(device)
         
         optimizer.zero_grad()
-        outputs = model(events)
-        loss = criterion(outputs, targets)
-        loss.backward()
-        optimizer.step()
+        
+        if scaler is not None:
+            with torch.autocast(device_type=device.type):
+                outputs = model(events)
+                loss = criterion(outputs, targets)
+            
+            scaler.scale(loss).backward()
+            scaler.step(optimizer)
+            scaler.update()
+        else:
+            outputs = model(events)
+            loss = criterion(outputs, targets)
+            loss.backward()
+            optimizer.step()
         
         total_loss += loss.item()
         _, predicted = outputs.max(1)
@@ -24,16 +38,30 @@ def train_one_epoch(model, dataloader, optimizer, criterion, device, num_classes
 
     return total_loss / len(dataloader), 100. * correct / total
 
-def evaluate(model, dataloader, criterion, device, num_classes=10):
+def evaluate(model, dataloader, criterion, device, measure_sparsity=False):
+    """
+    Evaluate the model on the test set and optionally measure sparsity.
+    """
     model.eval()
     total_loss = 0.0
     correct = 0
     total = 0
+    
+    firing_rates = []
+    hooks = []
+    
+    if measure_sparsity:
+        def hook(module, input, output):
+            firing_rates.append(output.detach().mean().item())
+        
+        for m in model.modules():
+            if isinstance(m, neuron.LIFNode):
+                hooks.append(m.register_forward_hook(hook))
 
+    pbar = tqdm(dataloader, desc="Evaluating", leave=False)
     with torch.no_grad():
-        for events, targets in dataloader:
-            events, targets = events.to(device), targets.to(device)
-            
+        for events, targets in pbar:
+            events, targets = events.to(device, dtype=torch.float32), targets.to(device)
             outputs = model(events)
             loss = criterion(outputs, targets)
             
@@ -42,4 +70,11 @@ def evaluate(model, dataloader, criterion, device, num_classes=10):
             total += targets.size(0)
             correct += predicted.eq(targets).sum().item()
 
-    return total_loss / len(dataloader), 100. * correct / total
+    sparsity = 0.0
+    if measure_sparsity:
+        for h in hooks:
+            h.remove()
+        avg_firing_rate = sum(firing_rates) / len(firing_rates) if firing_rates else 0.0
+        sparsity = (1.0 - avg_firing_rate) * 100
+
+    return total_loss / len(dataloader), 100. * correct / total, sparsity

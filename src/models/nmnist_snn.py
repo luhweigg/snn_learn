@@ -10,12 +10,11 @@ class NMNIST_SNN(nn.Module):
             layer.Linear(2 * 34 * 34, 256, bias=False),
             neuron.LIFNode(surrogate_function=surrogate.ATan()),
             layer.Dropout(0.5),
-            layer.Linear(256, 10, bias=False),
-            neuron.LIFNode(surrogate_function=surrogate.ATan())
+            layer.Linear(256, 10, bias=True),
         )
         functional.set_step_mode(self, step_mode='m')
 
     def forward(self, x: torch.Tensor):
         functional.reset_net(self)
-        out_spikes = self.network(x)
-        return out_spikes.sum(dim=0)
+        out = self.network(x)
+        return out.mean(dim=0)

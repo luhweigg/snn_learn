@@ -1,0 +1,58 @@
+_wandb:
+    value:
+        cli_version: 0.27.2
+        e:
+            kt9azokkqfqk2o70htu5raar0lx45arl:
+                args:
+                    - --use_wandb
+                codePath: main.py
+                codePathLocal: main.py
+                cpu_count: 10
+                cpu_count_logical: 16
+                disk:
+                    /:
+                        total: "997466697728"
+                        used: "253612720128"
+                email: maximefrys2e@gmail.com
+                executable: /home/maximefrys/Documents/projects/snn_learn/.venv/bin/python3
+                git:
+                    commit: 7b4a923816961c78de9ee46e8b40631900b4fd8c
+                    remote: git@github.com:luhweigg/snn_learn.git
+                host: maximefrys
+                memory:
+                    total: "16454156288"
+                os: Linux-6.18.7-76061807-generic-x86_64-with-glibc2.39
+                program: /home/maximefrys/Documents/projects/snn_learn/main.py
+                python: CPython 3.12.3
+                root: /home/maximefrys/Documents/projects/snn_learn
+                startedAt: "2026-06-09T09:31:10.703317Z"
+                writerId: kt9azokkqfqk2o70htu5raar0lx45arl
+        m: []
+        python_version: 3.12.3
+        t:
+            "1":
+                - 1
+            "2":
+                - 1
+            "3":
+                - 16
+            "4": 3.12.3
+            "5": 0.27.2
+            "12": 0.27.2
+            "13": linux-x86_64
+Time:
+    value: 16
+batch_size:
+    value: 64
+dataset:
+    value: nmnist
+epochs:
+    value: 20
+lr:
+    value: 0.001
+save_dir:
+    value: ./saved_models
+use_wandb:
+    value: true
+wandb_project:
+    value: snn_learn

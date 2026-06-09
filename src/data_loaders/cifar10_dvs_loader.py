@@ -4,6 +4,9 @@ import tonic.transforms as transforms
 from torch.utils.data import random_split
 
 def get_cifar10_loaders(batch_size=64, n_time_bins=10):
+    """
+    Get CIFAR10-DVS data loaders.
+    """
     tonic.datasets.CIFAR10DVS.url = "https://ndownloader.figshare.com/files/7712788"
 
     frame_transform = transforms.Compose([
