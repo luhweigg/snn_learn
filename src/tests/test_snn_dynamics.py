@@ -1,6 +1,6 @@
 import torch
 from spikingjelly.activation_based import functional, neuron
-from src.models.nmnist_snn import NMNIST_SNN
+from src.models import NMNIST_SNN
 
 def test_snn_state_reset():
     """
@@ -28,6 +28,9 @@ def test_snn_state_reset():
     assert not torch.equal(out_raw_a, out_raw_b), "Echec: Les neurones n'ont pas de memoire temporelle."
 
 def test_snn_sparsity_bounds():
+    """
+    Verify that the sparsity of the SNN remains within reasonable bounds.
+    """
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = NMNIST_SNN().to(device)
     model.eval()

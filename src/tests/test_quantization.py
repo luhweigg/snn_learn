@@ -1,6 +1,6 @@
 import torch
-from src.models.nmnist_snn import NMNIST_SNN
-from src.engine.quantization import quantize_weights
+from src.models import NMNIST_SNN
+from src.engine import quantize_weights
 
 def test_quantization_bounds_and_types():
     """

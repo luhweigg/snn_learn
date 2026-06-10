@@ -41,23 +41,23 @@ def test_overfit_single_batch_DVSGesture():
     """
     torch.manual_seed(67)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = DVSGesture_SNN().to(device)
-    
+    model = DVSGesture_SNN().to(device)  # Utilise ton réseau unique
+
     batch_size = 2
     T = 2
     C, H, W = 2, 128, 128
-    
+
     events = (torch.rand(T, batch_size, C, H, W) > 0.9).float().to(device)
     targets = torch.randint(0, 11, (batch_size,)).to(device)
-    
+
     fake_loader = [(events, targets)]
-    
+
     optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
     criterion = nn.CrossEntropyLoss()
-    
+
     initial_loss, _ = train_one_epoch(model, fake_loader, optimizer, criterion, device)
-    
+
     for _ in range(5):
         final_loss, _ = train_one_epoch(model, fake_loader, optimizer, criterion, device)
-            
+
     assert final_loss < initial_loss, f"Erreur de propagation ! Init: {initial_loss:.4f}, Final: {final_loss:.4f}"
